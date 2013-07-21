@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>PacMan</title>
+		<script type="text/javascript" src="jquery-2.0.0.js"></script>
+		<script type="text/javascript">
+		function Game(w,h,drawPane){
+			var width = w;
+			var height = h;
+			var canvas = drawPane;
+			var context = canvas.getContext('2d');
+			var cells = new Array();
+			var pacMan;
+			var ghosts = new Array();
+			//remember kids: create your 2d arrays for the order you want to address them! 
+			for(var y = 0; y < height; y++){
+				cells[y]=new Array();
+				for(var x = 0; x < width; x++){
+
+					if(y%2==1){
+						cells[y][x]=new Cell(true, true, false); // a passable cell with a nibble
+					}else if(x%2==1){
+						cells[y][x]=new Cell(true, true, false); // a passable cell with a nibble
+					}else{
+						cells[y][x]=new Cell(false, false, true); // a passable cell with a nibble
+					}
+					if(x==0 || x == width-1){
+						cells[y][x]=new Cell(false, false, true); // a wall
+					}
+					if(y==0 || y == height-1){
+						cells[y][x]=new Cell(false, false, true); // a wall
+					}
+				}
+			}
+
+			this.draw = function () {
+				context.fillStyle='#000000';
+				context.fillRect(0,0,canvas.width, canvas.height);
+
+				//draw the level
+				for(var y = 0; y < height; y++){
+					for(var x= 0; x < width; x++){
+						if(cells[y][x].getPassable()) {
+							context.fillStyle='#000000';
+							
+						}
+						if(cells[y][x].getIsWall()) {
+							context.fillStyle='#0000FF';
+							context.fillRect(x*(canvas.width/width),y*(canvas.height/height),(canvas.width/width),(canvas.height/height));
+						}
+						if(cells[y][x].getEdible()) {
+							context.fillStyle='#FFFF00';
+							context.fillRect(x*(canvas.width/width)+(canvas.width/width)/3,y*(canvas.width/width)+(canvas.width/width)/3,(canvas.width/width)/3,(canvas.width/width)/3);
+						}
+
+					}
+				}
+				//draw pacmans body
+				context.fillStyle='#FFFF00';
+				context.fillRect(pacMan.getX()*(canvas.width/width), pacMan.getY()*(canvas.height/height),(canvas.width/width),(canvas.height/height));
+				//TODO: draw pacmans mouth
+
+				for(var i = 0; i < ghosts.length; i++){
+					context.fillStyle=ghosts[i].getColor();
+					context.fillRect(ghosts[i].getX()*(canvas.width/width), ghosts[i].getY()*(canvas.height/height),(canvas.width/width),(canvas.height/height));
+				}
+			}
+			this.update=function(){
+				pacMan.update();
+				for(var i = 0; i < ghosts.length; i++){
+					ghosts[i].update();
+				}
+			}
+			this.addPacMan = function(x, y){
+				pacMan = new PacMan(x,y, this);
+			}
+			this.inPut=function (key) {
+				//alert(key);
+				if(key=='w'){
+					pacMan.setDirection(0,-1);
+				}
+				if(key=='s'){
+					pacMan.setDirection(0,1);
+				}
+				if(key=='a'){
+					pacMan.setDirection(-1,0);
+				}
+				if(key=='d'){
+					pacMan.setDirection(1,0);
+				}
+			}
+			this.canWalk=function(x,y){
+				if(!cells[y][x].getIsWall())return true;
+			}
+			this.eatCell=function(x,y){
+				if(cells[y][x].getEdible())
+					cells[y][x].eat();
+			}
+			this.addGhost=function(x,y,color){
+				ghosts.push(new Ghost(x,y,color, this));
+			}
+			this.getPacMan = function(){
+				return pacMan;
+			}
+		}
+		function Cell(canPass, hasNibble, block) {
+			var edible = hasNibble;
+			var passable = canPass;
+			var isWall = block;
+			this.getEdible = function() {
+				return edible;
+			}
+			this.getPassable=function() {
+				return passable;
+			}
+			this.getIsWall=function() {
+				return isWall;
+			}
+			this.eat=function(){
+				edible=false;
+			}
+		}
+		function PacMan(startX, startY, b){
+			var board = b;
+			var posX = startX;
+			var posY = startY;
+			var vX = 0;
+			var vY = 0;
+			this.getX=function(){
+				return posX;
+			}
+			this.getY=function(){
+				return posY;
+			}
+			this.getVX=function(){
+				return vX;
+			}
+			this.getVY=function(){
+				return vY;
+			}
+			this.setDirection=function(xDir, yDir) {
+				if(xDir<0){ vX = -1; vY = 0;}
+				if(xDir>0){ vX = 1; vY = 0;}
+				if(yDir<0){ vX = 0; vY = -1;}
+				if(yDir>0){ vX = 0; vY = 1;}
+			}
+			this.update=function(){
+				if(board.canWalk(posX+vX, posY+vY)){
+					posX+=vX;
+					posY+=vY;
+					board.eatCell(posX, posY);
+				}
+			}
+		}
+		function Ghost(startX, startY, col, b){
+			var color = col;
+			var posX = startX;
+			var posY = startY;
+			var vX = -1; //initial ghost direction is left
+			var vY=0;
+			var board = b;
+			var pacMan = board.getPacMan();
+
+			var targetX;
+			var targetY;
+
+			this.getX=function(){
+				return posX;
+			}
+			this.getY=function(){
+				return posY;
+			}
+			this.getColor=function(){
+				return color;
+			}
+
+			this.update=function(){
+
+				//update target cell
+
+				//blinky: target pacman
+				if(color == '#FF0000'){
+					targetX = pacMan.getX();
+					targetY = pacMan.getY();
+				}
+				//set next direction
+				//check all four directions
+				//cannot move backwards ie next v != -v
+
+				var bestVX = 0;
+				var bestVY = 0;
+				var bestD = 99999;
+
+				
+				for(var i = -1; i < 2; i++){//check left and right
+					if(i!= -vX && i!=0 && board.canWalk(posX+i, posY)){
+						var thisD = Math.sqrt( Math.pow(targetX - (posX+i),2) + Math.pow((targetY - posY),2));
+
+						if(thisD<bestD) {
+							bestD = thisD;
+							bestVX = i;
+							bestVY = 0;
+						}
+					}
+				}
+
+				for(var i = -1; i < 2; i++){//check up and down
+					if(i!= -vY && i!=0 &&board.canWalk(posX, posY+i)){
+						//alert(i);
+						var thisD = Math.sqrt( Math.pow((targetX - posX),2) + Math.pow(targetY - (posY +i),2));
+						if(thisD<bestD) {
+							bestD = thisD;
+							bestVX = 0;
+							bestVY = i;
+						}
+					}
+				}
+				
+
+				if(bestVX!=0){
+					vX=bestVX;
+					vY=0;
+				}
+				if(bestVY!=0){
+					vX=0;
+					vY=bestVY;
+				}
+				//alert(bestVX + " " +vX+ " " + bestVY + " " + vY + " best d" + bestD);
+				//vX=bestVX;
+				//vY=bestVY;
+				//update pos
+				if(board.canWalk(posX+vX, posY+vY)){
+					posX+=vX;
+					posY+=vY;
+				}
+				
+			}
+
+			//ghosts can turn left or right but not reverse without a special call.
+			//TODO: implement special cell that a ghost may not turn into but may pass over normally
+
+		}
+		</script>
+		<script>
+		$(document).ready(function(){
+			var canvas = document.getElementById('pacmanGame');
+			var board = new Game(21,21, canvas);
+
+			document.onkeydown = function(e){
+				//alert('hi!' + e.keyCode);
+			    if (e.keyCode == 87) { 
+			        board.inPut('w');
+			    }
+			    if (e.keyCode == 65) {
+			        board.inPut('a');
+			    }
+			    if (e.keyCode == 68) {
+			        board.inPut('d');
+			    }
+			    if (e.keyCode == 83) {
+			        board.inPut('s');
+			    }
+			}
+
+
+			board.addPacMan(1,1);
+			board.draw();
+			board.addGhost(8,8,'#FF0000');
+			setInterval(function() {
+				board.update();
+				board.draw();
+			}, 100)
+		});
+		
+		</script>
+	</head>
+	<body>
+		<div id="PacManFixture"/>
+			<canvas id="pacmanGame" width='700px' height='700px'></canvas>
+		</div>
+	</body>
+</html>
