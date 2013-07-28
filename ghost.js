@@ -11,17 +11,43 @@ function Ghost(startX, startY, col, b){
 	var graveYardX = 0;
 	var graveYardY = 0;
 
-	var chase=true;
+	var chase=false;
 	var dead=false;
 
 	var targetX;
 	var targetY;
 
+	this.setHome=function(x,y){
+		homeX = x;
+		homeY = y;
+	}
+
+	this.getHomeX = function(){
+		return homeX;
+	}
+
+	this.getHomeY=function(){
+		return homeY;
+	}
+
+	this.setTarget = function(x,y){//taregeting callback
+		targetX = x;
+		targetY = y;
+	}
+
+	this.getTargets=function(){}//the targeting function for the child to override
+
 	this.getX=function(){
 		return posX;
 	}
+
 	this.getY=function(){
 		return posY;
+	}
+
+	this.setPos = function(x,y){
+		posX = x;
+		posY = y;
 	}
 	this.getColor=function(){
 		return color;
@@ -32,10 +58,14 @@ function Ghost(startX, startY, col, b){
 		//update target cell
 
 		//blinky: target pacman
-		if(color == '#FF0000'){
-			targetX = pacMan.getX();
-			targetY = pacMan.getY();
-		}
+		//if(color == '#FF0000'){
+		//this.setTarget(pacMan.getX(),pacMan.getY());
+
+
+		this.getTargets(board);
+		//targetX = pacMan.getX();
+		//targetY = pacMan.getY();
+		//}
 
 		if(chase){
 			targetX = homeX;
@@ -98,3 +128,72 @@ function Ghost(startX, startY, col, b){
 	//TODO: implement special cell that a ghost may not turn into but may pass over normally
 
 }
+
+function Blinky(startX, startY, b){
+	var ghosty = new Ghost(startX, startY, '#FF0000', b);
+	ghosty.getTargets=function(board){
+		//alert('pinky targeting');
+		var pac = board.getPacMan();
+		this.setTarget(pac.getX(),pac.getY());
+		//alert('hi');
+	}
+	ghosty.setHome(b.getWidth(), -2);
+	return ghosty;
+}
+
+function Pinky(startX, startY, b){
+	var ghosty = new Ghost(startX, startY, '#FF0080', b);
+	ghosty.getTargets=function(board){
+		//alert('pinky targeting');
+		var pac = board.getPacMan();
+		this.setTarget(pac.getX()+(4*pac.getVX()),pac.getY()+(4*pac.getVY()));
+		//alert('hi');
+	}
+	ghosty.setHome(1, -2);
+	return ghosty;
+}
+
+function Inky(startX, startY, b){
+	var ghosty = new Ghost(startX, startY, '#00FFFF', b);
+	ghosty.getTargets=function(board){
+		//alert('pinky targeting');
+		var pac = board.getPacMan();
+		var blink = board.getBlinky();
+		var t1x = pac.getX()+(2*pac.getVX());
+		var t1y = pac.getY()+(2*pac.getVY());
+
+		var blinkyTot1x = t1x-blink.getX();
+		var blinkyTot1y = t1y-blink.getY();
+
+		var tx = blink.getX() + blinkyTot1x;
+		var ty = blink.getY() + blinkyTot1y;
+
+		this.setTarget(tx,ty);
+		//alert('hi');
+	}
+	ghosty.setHome(b.getWidth(), b.getHeight()+1);
+	return ghosty;
+}
+
+function Clyde(startX, startY, b){
+	var ghosty = new Ghost(startX, startY, '#FA6800', b);
+	ghosty.getTargets=function(board){
+		//alert('pinky targeting');
+		var pac = board.getPacMan();
+		var distToPacman =Math.sqrt(Math.pow((pac.getX() - this.getX()),2) + Math.pow((pac.getY() - this.getY()),2) );
+		if(Math.ceil(distToPacman)>8){
+			this.setTarget(pac.getX(),pac.getY());
+			//$('#clydeLog').text('target set to x: ' + pac.getX() + " y: " + pac.getY() + " distance: " + distToPacman);
+		}else{
+			this.setTarget(this.getHomeX(), this.getHomeY());
+			//$('#clydeLog').text('target set to x: ' + this.getHomeX() + " y: " + this.getHomeY() + " distance: " + distToPacman);
+		}
+		//this.setTarget(pac.getX()+(4*pac.getVX()),pac.getY()+(4*pac.getVY()));
+		//alert('hi');
+	}
+	ghosty.setHome(0, b.getHeight()+1);
+	return ghosty;
+}
+
+
+

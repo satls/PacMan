@@ -4,201 +4,17 @@
 		<meta charset="utf-8">
 		<title>PacMan</title>
 		<script type="text/javascript" src="jquery-2.0.0.js"></script>
-		<script type="text/javascript" src="ghost.js"></script>
-		<script type="text/javascript">
-		function Game(w,h,drawPane){
-			var width = w;
-			var height = h;
-			var canvas = drawPane;
-			var context = canvas.getContext('2d');
-			var cells = new Array();
-			var pacMan;
-			var ghosts = new Array();
-			//remember kids: create your 2d arrays for the order you want to address them! 
-			for(var y = 0; y < height; y++){
-				cells[y]=new Array();
-				for(var x = 0; x < width; x++){
-
-					if(y%2==1){
-						cells[y][x]=new Cell(true, true, false); // a passable cell with a nibble
-					}else if(x%2==1){
-						cells[y][x]=new Cell(true, true, false); // a passable cell with a nibble
-					}else{
-						cells[y][x]=new Cell(false, false, true); // a passable cell with a nibble
-					}
-					if(x==0 || x == width-1){
-						cells[y][x]=new Cell(false, false, true); // a wall
-					}
-					if(y==0 || y == height-1){
-						cells[y][x]=new Cell(false, false, true); // a wall
-					}
-				}
-			}
-
-			this.draw = function () {
-				context.fillStyle='#000000';
-				context.fillRect(0,0,canvas.width, canvas.height);
-
-				//draw the level
-				for(var y = 0; y < height; y++){
-					for(var x= 0; x < width; x++){
-						if(cells[y][x].getPassable()) {
-							context.fillStyle='#000000';
-							
-						}
-						if(cells[y][x].getIsWall()) {
-							context.fillStyle='#0000FF';
-							context.fillRect(x*(canvas.width/width),y*(canvas.height/height),(canvas.width/width),(canvas.height/height));
-						}
-						if(cells[y][x].getEdible()) {
-							context.fillStyle='#FFFF00';
-							context.fillRect(x*(canvas.width/width)+(canvas.width/width)/3,y*(canvas.width/width)+(canvas.width/width)/3,(canvas.width/width)/3,(canvas.width/width)/3);
-						}
-
-					}
-				}
-				//draw pacmans body
-				context.fillStyle='#FFFF00';
-				context.fillRect(pacMan.getX()*(canvas.width/width), pacMan.getY()*(canvas.height/height),(canvas.width/width),(canvas.height/height));
-				//TODO: draw pacmans mouth
-
-				for(var i = 0; i < ghosts.length; i++){
-					context.fillStyle=ghosts[i].getColor();
-					context.fillRect(ghosts[i].getX()*(canvas.width/width), ghosts[i].getY()*(canvas.height/height),(canvas.width/width),(canvas.height/height));
-				}
-			}
-			this.update=function(){
-				pacMan.update();
-				for(var i = 0; i < ghosts.length; i++){
-					ghosts[i].update();
-				}
-			}
-			this.addPacMan = function(x, y){
-				pacMan = new PacMan(x,y, this);
-			}
-			this.inPut=function (key) {
-				//alert(key);
-				if(key=='w'){
-					pacMan.setDirection(0,-1);
-				}
-				if(key=='s'){
-					pacMan.setDirection(0,1);
-				}
-				if(key=='a'){
-					pacMan.setDirection(-1,0);
-				}
-				if(key=='d'){
-					pacMan.setDirection(1,0);
-				}
-			}
-			this.canWalk=function(x,y){
-				if(!cells[y][x].getIsWall())return true;
-			}
-			this.eatCell=function(x,y){
-				if(cells[y][x].getEdible())
-					cells[y][x].eat();
-			}
-			this.addGhost=function(x,y,color){
-				ghosts.push(new Ghost(x,y,color, this));
-			}
-			this.getPacMan = function(){
-				return pacMan;
-			}
-		}
-		function Cell(canPass, hasNibble, block) {
-			var edible = hasNibble;
-			var passable = canPass;
-			var isWall = block;
-			this.getEdible = function() {
-				return edible;
-			}
-			this.getPassable=function() {
-				return passable;
-			}
-			this.getIsWall=function() {
-				return isWall;
-			}
-			this.eat=function(){
-				edible=false;
-			}
-		}
-		function PacMan(startX, startY, b){
-			var board = b;
-			var posX = startX;
-			var posY = startY;
-			var vX = 0;
-			var vY = 0;
-			var nextVX = 0;
-			var nextVY = 0;
-			this.getX=function(){
-				return posX;
-			}
-			this.getY=function(){
-				return posY;
-			}
-			this.getVX=function(){
-				return vX;
-			}
-			this.getVY=function(){
-				return vY;
-			}
-			this.setDirection=function(xDir, yDir) {
-				if(xDir<0){ nextVX = -1; nextVY = 0;}
-				if(xDir>0){ nextVX = 1; nextVY = 0;}
-				if(yDir<0){ nextVX = 0; nextVY = -1;}
-				if(yDir>0){ nextVX = 0; nextVY = 1;}
-			}
-			this.update=function(){
-				if(nextVX!=vX || nextVY!=vY){//check if user has tried to turn
-					if(board.canWalk(posX+nextVX, posY+nextVY)){
-						vX=nextVX;
-						vY=nextVY;
-					}
-				}
-				if(!board.canWalk(posX+vX, posY+vY)){
-					//if corner, then check if only one option, then take that option
-					var numChoice = 0;
-					var nVX = 0;
-					var nVY=0;
-
-					for(var i = -1; i < 2; i++){
-						if(board.canWalk(posX+i, posY) && i!=0 && i!=-vX){
-							nVX=i;
-							nVY=0;
-							numChoice++;
-						}
-						if(board.canWalk(posX, posY+i) && i!=0 && i!=-vY){
-							nVX=0;
-							nVY=i;
-							numChoice++;
-						}
-						
-					}
-					if(numChoice==1){
-						vX=nVX;
-						vY=nVY;
-						nextVX=vX;
-						nextVY=vY;
-					}else{
-						vX=0;
-						vY=0;
-						nextVX=vX;
-						nextVY=vY;
-					}
-				}
-				if(board.canWalk(posX+vX, posY+vY)){
-					posX+=vX;
-					posY+=vY;
-					board.eatCell(posX, posY);
-				}
-			}
-		}
-
-		</script>
+		<script type="text/javascript" src="Ghost.js"></script>
+		<script type="text/javascript" src='Game.js'></script>
+		<script type="text/javascript" src='PacMan.js'></script>
+		<script type="text/javascript" src='Cell.js'></script>
+		
 		<script>
+		var canvas;
+		var board;
 		$(document).ready(function(){
-			var canvas = document.getElementById('pacmanGame');
-			var board = new Game(21,21, canvas);
+			canvas = document.getElementById('pacmanGame');
+			board = new Game(28,31, canvas);
 
 			document.onkeydown = function(e){
 				//alert('hi!' + e.keyCode);
@@ -217,20 +33,42 @@
 			}
 
 
-			board.addPacMan(1,1);
+			board.addPacMan(14,23);
+			//board.addPacMan(20,29);
+			
+			board.addGhost(12,14);
 			board.draw();
-			board.addGhost(8,8,'#FF0000');
 			setInterval(function() {
 				board.update();
 				board.draw();
 			}, 500)
 		});
-		
+		function addBlinky(){
+			board.getBlinky().setPos(14,11);
+		}
+		function addPinky(){
+			board.getPinky().setPos(14,11);
+		}
+		function addInky(){
+			board.getInky().setPos(14,11);
+		}
+		function addClyde(){
+			board.getClyde().setPos(14,11);
+			//board.getClyde().setPos(10,29);
+		}
 		</script>
+		
 	</head>
 	<body>
 		<div id="PacManFixture"/>
-			<canvas id="pacmanGame" width='700px' height='700px'></canvas>
+			<canvas id="pacmanGame" width='560px' height='620px'></canvas>
 		</div>
+		<div id='maptest'>
+			<input type=submit value='blinky' onclick='addBlinky()'></input>
+			<input type=submit value='pinky' onclick='addPinky()'></input>
+			<input type=submit value='inky' onclick='addInky()'></input>
+			<input type=submit value='clyde' onclick='addClyde()'></input>
+		</div>
+		<div id='clydeLog'></div>
 	</body>
 </html>
