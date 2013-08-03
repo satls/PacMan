@@ -69,7 +69,9 @@ function Ghost(startX, startY, col, b){
 		posY = y;
 	}
 	this.getColor=function(){
-		return color;
+		var col = color;
+		if(!frightened) return color;
+		else return "#99ccff";
 	}
 
 	this.update=function(){
@@ -176,6 +178,15 @@ function Ghost(startX, startY, col, b){
 			posX+=vX;
 			posY+=vY;
 		}
+		//teleport
+		switch(posX){
+			case 0:
+				posX=27;
+				break;
+			case 27:
+				posX=0;
+				break;
+		}
 	}
 
 	//ghosts can turn left or right but not reverse without a special call.
@@ -210,7 +221,6 @@ function Pinky(startX, startY, b){
 function Inky(startX, startY, b){
 	var ghosty = new Ghost(startX, startY, '#00FFFF', b);
 	ghosty.getTargets=function(board){
-		//alert('pinky targeting');
 		var pac = board.getPacMan();
 		var blink = board.getBlinky();
 		var t1x = pac.getX()+(2*pac.getVX());
@@ -219,11 +229,10 @@ function Inky(startX, startY, b){
 		var blinkyTot1x = t1x-blink.getX();
 		var blinkyTot1y = t1y-blink.getY();
 
-		var tx = blink.getX() + blinkyTot1x;
-		var ty = blink.getY() + blinkyTot1y;
+		var tx = blink.getX() + 2*blinkyTot1x;
+		var ty = blink.getY() + 2*blinkyTot1y;
 
 		this.setTarget(tx,ty);
-		//alert('hi');
 	}
 	ghosty.setHome(b.getWidth(), b.getHeight()+1);
 	return ghosty;

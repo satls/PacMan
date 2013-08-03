@@ -10,7 +10,7 @@ function Game(w,h,drawPane){
 	var pinky;
 	var inky;
 	var clyde;
-	var map = "wwwwwwwwwwwwwwwwwwwwwwwwwwww w************ww************w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w**************************w w*wwww*ww*wwwwwwww*ww*wwww*w w*wwww*ww*wwwwwwww*ww*wwww*w w******ww****ww****ww******w wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww sssssw*ssswwwwwwwwsss*wsssss wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww w************ww************w w*wwwww*wwww*ww*wwwww*wwww*w w*wwwww*wwww*ww*wwwww*wwww*w w***ww*******ss*******ww***w www*ww*ww*wwwwwwww*ww*ww*www www*ww*ww*wwwwwwww*ww*ww*www w******ww****ww****ww******w w*wwwwwwwwww*ww*wwwwwwwwww*w w*wwwwwwwwww*ww*wwwwwwwwww*w w**************************w wwwwwwwwwwwwwwwwwwwwwwwwwwwwe";
+	var map = "wwwwwwwwwwwwwwwwwwwwwwwwwwww w************ww************w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w**************************w w*wwww*ww*wwwwwwww*ww*wwww*w w*wwww*ww*wwwwwwww*ww*wwww*w w******ww****ww****ww******w wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww ssssss*ssswwwwwwwwsss*ssssss wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww w************ww************w w*wwwww*wwww*ww*wwwww*wwww*w w*wwwww*wwww*ww*wwwww*wwww*w w***ww*******ss*******ww***w www*ww*ww*wwwwwwww*ww*ww*www www*ww*ww*wwwwwwww*ww*ww*www w******ww****ww****ww******w w*wwwwwwwwww*ww*wwwwwwwwww*w w*wwwwwwwwww*ww*wwwwwwwwww*w w**************************w wwwwwwwwwwwwwwwwwwwwwwwwwwwwe";
 
 	fillMap();
 
@@ -102,7 +102,10 @@ function Game(w,h,drawPane){
 				}
 				if(cells[y][x].getEdible()) {
 					context.fillStyle='#FFFF00';
-					context.fillRect(x*(canvas.width/width)+(canvas.width/width)/3,y*(canvas.width/width)+(canvas.width/width)/3,(canvas.width/width)/3,(canvas.width/width)/3);
+					context.fillRect(x*(canvas.width/width)+2*((canvas.width/width)/5),y*(canvas.width/width)+2*((canvas.width/width)/5),(canvas.width/width)/5,(canvas.width/width)/5);
+					if((x==1 && y==3) || (x==1 && y==23) || (x==26 && y==3) || (x==26 && y==23)){
+						context.fillRect(x*(canvas.width/width)+((canvas.width/width)/4),y*(canvas.width/width)+((canvas.width/width)/4),(canvas.width/width)/2,(canvas.width/width)/2);
+					}
 				}
 
 			}
@@ -142,7 +145,8 @@ function Game(w,h,drawPane){
 		}
 	}
 	this.canWalk=function(x,y){
-		if(!cells[y][x].getIsWall())return true;
+		if(x<width && x>-1 && y<height && y>-1 && !cells[y][x].getIsWall())return true;
+		else return false;
 	}
 	this.canTurnInto=function(x,y){
 		//ghosts may not turn up at (12,11), (15,11), (12,23), (15,23)

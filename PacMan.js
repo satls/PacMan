@@ -55,7 +55,8 @@ function PacMan(startX, startY, b){
 				vY=nVY;
 				nextVX=vX;
 				nextVY=vY;
-			}else{
+			}
+			else{
 				vX=0;
 				vY=0;
 				nextVX=vX;
@@ -66,6 +67,15 @@ function PacMan(startX, startY, b){
 			posX+=vX;
 			posY+=vY;
 			board.eatCell(posX, posY);
+		}
+		//teleport
+		switch(posX){
+			case 0:
+				posX=27;
+				break;
+			case 27:
+				posX=0;
+				break;
 		}
 	}
 }
