@@ -17,24 +17,22 @@
 			board = new Game(28,31, canvas);
 
 			document.onkeydown = function(e){
-				//alert('hi!' + e.keyCode);
-			    if (e.keyCode == 87) { 
+			    if (e.keyCode == 87 || e.keyCode==38) { 
 			        board.inPut('w');
 			    }
-			    if (e.keyCode == 65) {
+			    if (e.keyCode == 65 || e.keyCode==37) {
 			        board.inPut('a');
 			    }
-			    if (e.keyCode == 68) {
+			    if (e.keyCode == 68 || e.keyCode==39) {
 			        board.inPut('d');
 			    }
-			    if (e.keyCode == 83) {
+			    if (e.keyCode == 83 || e.keyCode==40) {
 			        board.inPut('s');
 			    }
 			}
 
 
 			board.addPacMan(14,23);
-			//board.addPacMan(20,29);
 			
 			board.addGhost(12,14);
 			board.draw();
