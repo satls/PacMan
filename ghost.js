@@ -12,10 +12,29 @@ function Ghost(startX, startY, col, b){
 	var graveYardY = 0;
 
 	var chase=false;
-	var dead=false;
+	var frightened=false;
 
 	var targetX;
 	var targetY;
+
+
+	this.scatter = function(){
+		chase = false;
+		vX = -vX;
+		vY = -vY;
+	}
+	this.chase = function(){
+		chase = true;
+		vX = -vX;
+		vY = -vY;
+	}
+
+	this.frighten = function(){
+		frightened=true;
+	}
+	this.unfrighten = function(){
+		frightened=false;
+	}
 
 	this.setHome=function(x,y){
 		homeX = x;
@@ -56,72 +75,105 @@ function Ghost(startX, startY, col, b){
 	this.update=function(){
 
 		//update target cell
-
-		//blinky: target pacman
-		//if(color == '#FF0000'){
-		//this.setTarget(pacMan.getX(),pacMan.getY());
-
-
-		this.getTargets(board);
-		//targetX = pacMan.getX();
-		//targetY = pacMan.getY();
-		//}
-
-		if(chase){
-			targetX = homeX;
-			targetY = homeY;
-		}
-		//set next direction
-		//check all four directions
-		//cannot move backwards ie next v != -v
-
-		var bestVX = 0;
-		var bestVY = 0;
-		var bestD = 99999;
-
 		
-		for(var i = -1; i < 2; i++){//check left and right
-			if(i!= -vX && i!=0 && board.canWalk(posX+i, posY)){
-				var thisD = Math.sqrt( Math.pow(targetX - (posX+i),2) + Math.pow((targetY - posY),2));
-
-				if(thisD<bestD) {
-					bestD = thisD;
-					bestVX = i;
-					bestVY = 0;
+		if(frightened){
+			//randomly choose a square that is not backwards
+			var choices = new Array();
+			for(var i = -1; i<2; i++){
+				//check left right
+				if(board.canWalk(posX+i, posY) && vX!=-i && i!=0){
+					if(i==-1){
+						choices.push(function(){
+							vX = -1;
+							vY = 0;
+						});
+					}
+					if(i==1){
+						choices.push(function(){
+							vX = 1;
+							vY = 0;
+						});
+					}
 				}
 			}
-		}
-
-		for(var i = -1; i < 2; i++){//check up and down
-			if(i!= -vY && i!=0 &&board.canWalk(posX, posY+i)){
-				//alert(i);
-				var thisD = Math.sqrt( Math.pow((targetX - posX),2) + Math.pow(targetY - (posY +i),2));
-				if(thisD<bestD) {
-					bestD = thisD;
-					bestVX = 0;
-					bestVY = i;
+			for(var i = -1; i<2; i++){
+				//check up down
+				if(board.canWalk(posX, posY+i) && vY!=-i && i!=0){
+					if(i==-1){
+						choices.push(function(){
+							vX = 0;
+							vY = -1;
+						});
+					}
+					if(i==1){
+						choices.push(function(){
+							vX = 0;
+							vY = 1;
+						});
+					}
 				}
 			}
-		}
-		
+			if(choices.length>0){
+				choices[Math.floor(Math.random()*choices.length)]();
+			}
+		}else{ 
 
-		if(bestVX!=0){
-			vX=bestVX;
-			vY=0;
+			if(!chase){
+				targetX = homeX;
+				targetY = homeY;
+			}else{
+				this.getTargets(board);
+			}
+			//set next direction
+			//check all four directions
+			//cannot move backwards ie next v != -v
+			var bestVX = 0;
+			var bestVY = 0;
+			var bestD = 99999;
+
+			
+			for(var i = -1; i < 2; i++){//check left and right
+				if(i!= -vX && i!=0 && board.canWalk(posX+i, posY)){
+					var thisD = Math.sqrt( Math.pow(targetX - (posX+i),2) + Math.pow((targetY - posY),2));
+
+					if(thisD<bestD) {
+						bestD = thisD;
+						bestVX = i;
+						bestVY = 0;
+					}
+				}
+			}
+
+			for(var i = -1; i < 2; i++){//check up and down
+				if(i!= -vY && i!=0 &&board.canWalk(posX, posY+i)){
+					var thisD = Math.sqrt( Math.pow((targetX - posX),2) + Math.pow(targetY - (posY +i),2));
+					if(thisD<bestD) {
+						bestD = thisD;
+						bestVX = 0;
+						bestVY = i;
+					}
+				}
+			}
+			
+
+			if(bestVX!=0){
+				vX=bestVX;
+				vY=0;
+			}
+			if(bestVY!=0){
+				vX=0;
+				vY=bestVY;
+			}
+
 		}
-		if(bestVY!=0){
-			vX=0;
-			vY=bestVY;
-		}
-		//alert(bestVX + " " +vX+ " " + bestVY + " " + vY + " best d" + bestD);
 		//vX=bestVX;
 		//vY=bestVY;
+		
 		//update pos
 		if(board.canWalk(posX+vX, posY+vY)){
 			posX+=vX;
 			posY+=vY;
 		}
-		
 	}
 
 	//ghosts can turn left or right but not reverse without a special call.
@@ -194,6 +246,7 @@ function Clyde(startX, startY, b){
 	ghosty.setHome(0, b.getHeight()+1);
 	return ghosty;
 }
+
 
 
 

@@ -41,7 +41,7 @@
 			setInterval(function() {
 				board.update();
 				board.draw();
-			}, 500)
+			}, 100)
 		});
 		function addBlinky(){
 			board.getBlinky().setPos(14,11);
@@ -56,6 +56,18 @@
 			board.getClyde().setPos(14,11);
 			//board.getClyde().setPos(10,29);
 		}
+		function scatter(){
+			board.scatterGhosts();
+		}
+		function chase(){
+			board.chaseGhosts();
+		}
+		function frighten(){
+			board.frightenGhosts();
+		}
+		function unfrighten(){
+			board.unfrightenGhosts();
+		}
 		</script>
 		
 	</head>
@@ -68,6 +80,10 @@
 			<input type=submit value='pinky' onclick='addPinky()'></input>
 			<input type=submit value='inky' onclick='addInky()'></input>
 			<input type=submit value='clyde' onclick='addClyde()'></input>
+			<input type=submit value='scatter' onclick='scatter()'></input>
+			<input type=submit value='chase' onclick='chase()'></input>
+			<input type=submit value='frighten' onclick='frighten()'></input>
+			<input type=submit value='unfrighten' onclick='unfrighten()'></input>
 		</div>
 		<div id='clydeLog'></div>
 	</body>
