@@ -77,8 +77,6 @@ function Ghost(startX, startY, col, b){
 	this.update=function(){
 
 		//update target cell
-
-
 		
 		if(frightened){
 			//randomly choose a square that is not backwards
@@ -170,8 +168,6 @@ function Ghost(startX, startY, col, b){
 			}
 
 		}
-		//vX=bestVX;
-		//vY=bestVY;
 		
 		//update pos
 		if(board.canWalk(posX+vX, posY+vY)){
@@ -188,19 +184,14 @@ function Ghost(startX, startY, col, b){
 				break;
 		}
 	}
-
 	//ghosts can turn left or right but not reverse without a special call.
-	//TODO: implement special cell that a ghost may not turn into but may pass over normally
-
 }
 
 function Blinky(startX, startY, b){
 	var ghosty = new Ghost(startX, startY, '#FF0000', b);
 	ghosty.getTargets=function(board){
-		//alert('pinky targeting');
 		var pac = board.getPacMan();
 		this.setTarget(pac.getX(),pac.getY());
-		//alert('hi');
 	}
 	ghosty.setHome(b.getWidth(), -2);
 	return ghosty;
@@ -209,10 +200,8 @@ function Blinky(startX, startY, b){
 function Pinky(startX, startY, b){
 	var ghosty = new Ghost(startX, startY, '#FF0080', b);
 	ghosty.getTargets=function(board){
-		//alert('pinky targeting');
 		var pac = board.getPacMan();
 		this.setTarget(pac.getX()+(4*pac.getVX()),pac.getY()+(4*pac.getVY()));
-		//alert('hi');
 	}
 	ghosty.setHome(1, -2);
 	return ghosty;
@@ -225,13 +214,10 @@ function Inky(startX, startY, b){
 		var blink = board.getBlinky();
 		var t1x = pac.getX()+(2*pac.getVX());
 		var t1y = pac.getY()+(2*pac.getVY());
-
 		var blinkyTot1x = t1x-blink.getX();
 		var blinkyTot1y = t1y-blink.getY();
-
 		var tx = blink.getX() + 2*blinkyTot1x;
 		var ty = blink.getY() + 2*blinkyTot1y;
-
 		this.setTarget(tx,ty);
 	}
 	ghosty.setHome(b.getWidth(), b.getHeight()+1);
@@ -241,23 +227,14 @@ function Inky(startX, startY, b){
 function Clyde(startX, startY, b){
 	var ghosty = new Ghost(startX, startY, '#FA6800', b);
 	ghosty.getTargets=function(board){
-		//alert('pinky targeting');
 		var pac = board.getPacMan();
 		var distToPacman =Math.sqrt(Math.pow((pac.getX() - this.getX()),2) + Math.pow((pac.getY() - this.getY()),2) );
 		if(Math.ceil(distToPacman)>8){
 			this.setTarget(pac.getX(),pac.getY());
-			//$('#clydeLog').text('target set to x: ' + pac.getX() + " y: " + pac.getY() + " distance: " + distToPacman);
 		}else{
 			this.setTarget(this.getHomeX(), this.getHomeY());
-			//$('#clydeLog').text('target set to x: ' + this.getHomeX() + " y: " + this.getHomeY() + " distance: " + distToPacman);
 		}
-		//this.setTarget(pac.getX()+(4*pac.getVX()),pac.getY()+(4*pac.getVY()));
-		//alert('hi');
 	}
 	ghosty.setHome(0, b.getHeight()+1);
 	return ghosty;
 }
-
-
-
-

@@ -130,7 +130,6 @@ function Game(w,h,drawPane){
 		pacMan = new PacMan(x,y, this);
 	}
 	this.inPut=function (key) {
-		//alert(key);
 		if(key=='w'){
 			pacMan.setDirection(0,-1);
 		}
@@ -167,13 +166,10 @@ function Game(w,h,drawPane){
 			cells[y][x].eat();
 	}
 	this.addGhost=function(x,y){
-		//ghosts.push(new Ghost(x,y,color, this));
-		
 		blinky = Blinky(x+3,y,this);
 		pinky = Pinky(x,y,this);
 		inky= Inky(x+1,y,this);
 		clyde = Clyde(x+2,y,this);
-
 		ghosts.push(blinky);
 		ghosts.push(pinky);
 		ghosts.push(inky);
