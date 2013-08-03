@@ -144,6 +144,20 @@ function Game(w,h,drawPane){
 	this.canWalk=function(x,y){
 		if(!cells[y][x].getIsWall())return true;
 	}
+	this.canTurnInto=function(x,y){
+		//ghosts may not turn up at (12,11), (15,11), (12,23), (15,23)
+		//ie ghosts may not turn into (12,10), (15,10), (12,22), (15,22)
+		var returnVal = true;
+		switch(x){
+			case 12:
+				if(y==10 || y==22)  returnVal=false;
+				break;
+			case 15:
+				if(y==10 || y==22) returnVal=false;
+				break;
+		}
+		return returnVal;
+	}
 	this.eatCell=function(x,y){
 		if(cells[y][x].getEdible())
 			cells[y][x].eat();

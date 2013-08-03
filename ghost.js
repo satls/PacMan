@@ -75,13 +75,15 @@ function Ghost(startX, startY, col, b){
 	this.update=function(){
 
 		//update target cell
+
+
 		
 		if(frightened){
 			//randomly choose a square that is not backwards
 			var choices = new Array();
 			for(var i = -1; i<2; i++){
 				//check left right
-				if(board.canWalk(posX+i, posY) && vX!=-i && i!=0){
+				if(board.canTurnInto(posX+i, posY) &&board.canWalk(posX+i, posY) && vX!=-i && i!=0){
 					if(i==-1){
 						choices.push(function(){
 							vX = -1;
@@ -98,7 +100,7 @@ function Ghost(startX, startY, col, b){
 			}
 			for(var i = -1; i<2; i++){
 				//check up down
-				if(board.canWalk(posX, posY+i) && vY!=-i && i!=0){
+				if(board.canTurnInto(posX, posY+i) &&board.canWalk(posX, posY+i) && vY!=-i && i!=0){
 					if(i==-1){
 						choices.push(function(){
 							vX = 0;
@@ -133,7 +135,7 @@ function Ghost(startX, startY, col, b){
 
 			
 			for(var i = -1; i < 2; i++){//check left and right
-				if(i!= -vX && i!=0 && board.canWalk(posX+i, posY)){
+				if(i!= -vX && i!=0 && board.canTurnInto(posX+i, posY) && board.canWalk(posX+i, posY)){
 					var thisD = Math.sqrt( Math.pow(targetX - (posX+i),2) + Math.pow((targetY - posY),2));
 
 					if(thisD<bestD) {
@@ -145,7 +147,7 @@ function Ghost(startX, startY, col, b){
 			}
 
 			for(var i = -1; i < 2; i++){//check up and down
-				if(i!= -vY && i!=0 &&board.canWalk(posX, posY+i)){
+				if(i!= -vY && i!=0 && board.canTurnInto(posX, posY+i) && board.canWalk(posX, posY+i)){
 					var thisD = Math.sqrt( Math.pow((targetX - posX),2) + Math.pow(targetY - (posY +i),2));
 					if(thisD<bestD) {
 						bestD = thisD;
