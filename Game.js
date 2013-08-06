@@ -147,6 +147,19 @@ function Game(w,h,drawPane){
 		if(x<width && x>-1 && y<height && y>-1 && !cells[y][x].getIsWall())return true;
 		else return false;
 	}
+	this.checkCollision = function(x,y){//check to see if pacman and a ghost occupy the same square
+		for(var i = 0; i< ghosts.length; i++){
+			if(pacMan.getX()==ghosts[i].getX() && pacMan.getY()==ghosts[i].getY()) {
+				this.draw();
+				this.resetBoard();
+
+				alert("You just got omnomed by a ghost. click ok to continue");
+
+				return true;
+			}
+		}
+		return false;
+	}
 	this.canTurnInto=function(x,y){
 		//ghosts may not turn up at (12,11), (15,11), (12,23), (15,23)
 		//ie ghosts may not turn into (12,10), (15,10), (12,22), (15,22)
@@ -177,5 +190,22 @@ function Game(w,h,drawPane){
 	}
 	this.getPacMan = function(){
 		return pacMan;
+	}
+	this.resetBoard = function(){
+		this.scatterGhosts();
+		blinky.setPos(14,11);
+		pinky.setPos(13,14);
+		inky.setPos(14,14);
+		clyde.setPos(15,14);
+
+		blinky.resetV();
+		pinky.resetV();
+		inky.resetV();
+		clyde.resetV();
+
+		pacMan.setPos(14,23);
+		pacMan.resetV();
+
+		
 	}
 }

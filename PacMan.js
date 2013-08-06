@@ -6,6 +6,11 @@ function PacMan(startX, startY, b){
 	var vY = 0;
 	var nextVX = 0;
 	var nextVY = 0;
+
+	this.resetV = function(){
+		vX=0;
+		vY=0;
+	}
 	this.getX=function(){
 		return posX;
 	}
@@ -17,6 +22,10 @@ function PacMan(startX, startY, b){
 	}
 	this.getVY=function(){
 		return vY;
+	}
+	this.setPos=function(x,y){
+		posX = x;
+		posY = y;
 	}
 	this.setDirection=function(xDir, yDir) {
 		if(xDir<0){ nextVX = -1; nextVY = 0;}
@@ -71,11 +80,12 @@ function PacMan(startX, startY, b){
 		//teleport
 		switch(posX){
 			case 0:
-				posX=27;
+				this.setPos(27, posY);
 				break;
 			case 27:
-				posX=0;
+				this.setPos(0, posY)
 				break;
 		}
+		board.checkCollision(posX, posY);
 	}
 }

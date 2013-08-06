@@ -17,7 +17,10 @@ function Ghost(startX, startY, col, b){
 	var targetX;
 	var targetY;
 
-
+	this.resetV = function(){
+		vX = -1; //initial ghost direction is left
+		vY=0;
+	}
 	this.scatter = function(){
 		chase = false;
 		vX = -vX;
@@ -177,12 +180,13 @@ function Ghost(startX, startY, col, b){
 		//teleport
 		switch(posX){
 			case 0:
-				posX=27;
+				this.setPos(27, posY);
 				break;
 			case 27:
-				posX=0;
+				this.setPos(0, posY)
 				break;
 		}
+		board.checkCollision(posX, posY);
 	}
 	//ghosts can turn left or right but not reverse without a special call.
 }
