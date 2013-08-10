@@ -12,6 +12,9 @@ function Cell(canPass, hasNibble, block) {
 		return isWall;
 	}
 	this.eat=function(){
-		edible=false;
+		if(edible){
+			edible=false;
+			return true;
+		}
 	}
 }

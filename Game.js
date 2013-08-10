@@ -11,6 +11,44 @@ function Game(w,h,drawPane){
 	var inky;
 	var clyde;
 	var map = "wwwwwwwwwwwwwwwwwwwwwwwwwwww w************ww************w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w**************************w w*wwww*ww*wwwwwwww*ww*wwww*w w*wwww*ww*wwwwwwww*ww*wwww*w w******ww****ww****ww******w wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww ssssss*ssswwwwwwwwsss*ssssss wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww w************ww************w w*wwwww*wwww*ww*wwwww*wwww*w w*wwwww*wwww*ww*wwwww*wwww*w w***ww*******ss*******ww***w www*ww*ww*wwwwwwww*ww*ww*www www*ww*ww*wwwwwwww*ww*ww*www w******ww****ww****ww******w w*wwwwwwwwww*ww*wwwwwwwwww*w w*wwwwwwwwww*ww*wwwwwwwwww*w w**************************w wwwwwwwwwwwwwwwwwwwwwwwwwwwwe";
+/* map looks liek this!
+wwwwwwwwwwwwwwwwwwwwwwwwwwww
+w************ww************w
+w*wwww*wwwww*ww*wwww*wwwww*w
+w*wwww*wwwww*ww*wwww*wwwww*w
+w*wwww*wwwww*ww*wwww*wwwww*w
+w**************************w
+w*wwww*ww*wwwwwwww*ww*wwww*w
+w*wwww*ww*wwwwwwww*ww*wwww*w
+w******ww****ww****ww******w
+wwwwww*wwwwwswwswwwww*wwwwww
+wwwwww*wwwwwswwswwwww*wwwwww
+wwwwww*wwssssssssssww*wwwwww
+wwwwww*wwswwwwwwwwsww*wwwwww
+wwwwww*wwswwwwwwwwsww*wwwwww
+ssssss*ssswwwwwwwwsss*ssssss
+wwwwww*wwswwwwwwwwsww*wwwwww
+wwwwww*wwswwwwwwwwsww*wwwwww
+wwwwww*wwssssssssssww*wwwwww
+wwwwww*wwswwwwwwwwsww*wwwwww
+wwwwww*wwswwwwwwwwsww*wwwwww
+w************ww************w
+w*wwwww*wwww*ww*wwwww*wwww*w
+w*wwwww*wwww*ww*wwwww*wwww*w
+w***ww*******ss*******ww***w
+www*ww*ww*wwwwwwww*ww*ww*www
+www*ww*ww*wwwwwwww*ww*ww*www
+w******ww****ww****ww******w
+w*wwwwwwwwww*ww*wwwwwwwwww*w
+w*wwwwwwwwww*ww*wwwwwwwwww*w
+w**************************w
+wwwwwwwwwwwwwwwwwwwwwwwwwwww
+*/
+	
+
+	var score=0;
+	var nibblesEaten = 0;
+	var lives = 0;
 
 	fillMap();
 
@@ -87,17 +125,20 @@ function Game(w,h,drawPane){
 	}
 	this.draw = function () {
 		context.fillStyle='#000000';
+		//context.fillStyle='#b0b0b0';
 		context.fillRect(0,0,canvas.width, canvas.height);
 
 		//draw the level
 		for(var y = 0; y < height; y++){
 			for(var x= 0; x < width; x++){
-				if(cells[y][x].getPassable()) {
-					context.fillStyle='#000000';
-					
-				}
+				//if(cells[y][x].getPassable()) {
+					//context.fillStyle='#000000';
+				//	context.fillStyle='#c0c0c0';
+				//	
+				//}
 				if(cells[y][x].getIsWall()) {
 					context.fillStyle='#0000FF';
+					//context.fillStyle='#707070';
 					context.fillRect(x*(canvas.width/width),y*(canvas.height/height),(canvas.width/width),(canvas.height/height));
 				}
 				if(cells[y][x].getEdible()) {
@@ -119,6 +160,8 @@ function Game(w,h,drawPane){
 			context.fillStyle=ghosts[i].getColor();
 			context.fillRect(ghosts[i].getX()*(canvas.width/width), ghosts[i].getY()*(canvas.height/height),(canvas.width/width),(canvas.height/height));
 		}
+
+		
 	}
 	this.update=function(){
 		pacMan.update();
@@ -176,7 +219,10 @@ function Game(w,h,drawPane){
 	}
 	this.eatCell=function(x,y){
 		if(cells[y][x].getEdible())
-			cells[y][x].eat();
+			if(cells[y][x].eat()) {
+				nibblesEaten++;
+				$('#log').text(nibblesEaten);
+			}
 	}
 	this.addGhost=function(x,y){
 		blinky = Blinky(x+3,y,this);
@@ -205,7 +251,5 @@ function Game(w,h,drawPane){
 
 		pacMan.setPos(14,23);
 		pacMan.resetV();
-
-		
 	}
 }
