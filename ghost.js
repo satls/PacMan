@@ -38,6 +38,9 @@ function Ghost(startX, startY, col, b){
 	this.unfrighten = function(){
 		frightened=false;
 	}
+	this.getFrightened = function(){
+		return frightened;
+	}
 
 	this.setHome=function(x,y){
 		homeX = x;

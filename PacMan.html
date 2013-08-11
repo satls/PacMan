@@ -36,10 +36,8 @@
 			
 			board.addGhost(12,14);
 			board.draw();
-			setInterval(function() {
-				board.update();
-				board.draw();
-			}, 200);
+			board.start();
+			
 		});
 		function addBlinky(){
 			board.getBlinky().setPos(14,11);
@@ -66,12 +64,19 @@
 		function unfrighten(){
 			board.unfrightenGhosts();
 		}
+		function pause(){
+			board.pause();
+		}
+		function start(){
+			board.start();
+		}
 		</script>
 		
 	</head>
 	<body>
 		<div id="PacManFixture"/>
 			<canvas id="pacmanGame" width='560px' height='620px'></canvas>
+			<!-- <canvas id="pacmanGame" width='840px' height='930px'></canvas> -->
 		</div>
 		<div id='gameControls'>
 			<input type=submit value='blinky' onclick='addBlinky()'></input>
@@ -82,7 +87,16 @@
 			<input type=submit value='chase' onclick='chase()'></input>
 			<input type=submit value='frighten' onclick='frighten()'></input>
 			<input type=submit value='unfrighten' onclick='unfrighten()'></input>
+			<input type=submit value='pause' onclick='pause()'></input>
+			<input type=submit value='start' onclick='start()'></input>
 		</div>
-		<div id='log'>0</div>
+		<div id='nibbles'></div>
+		<div id='lifes'></div>
+		<div id='pinky timer'></div>
+		<div id='inky timer'></div>
+		<div id='clyde timer'></div>
+		<div id='chase timer'></div>
+		<div id='scatter timer'></div>
+		<div id='frightened timer'></div>
 	</body>
 </html>

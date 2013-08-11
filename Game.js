@@ -10,6 +10,9 @@ function Game(w,h,drawPane){
 	var pinky;
 	var inky;
 	var clyde;
+	var pacTimer;
+	var ghostTimer;
+	this.frightenTimer;
 	var map = "wwwwwwwwwwwwwwwwwwwwwwwwwwww w************ww************w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w**************************w w*wwww*ww*wwwwwwww*ww*wwww*w w*wwww*ww*wwwwwwww*ww*wwww*w w******ww****ww****ww******w wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww ssssss*ssswwwwwwwwsss*ssssss wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww w************ww************w w*wwwww*wwww*ww*wwwww*wwww*w w*wwwww*wwww*ww*wwwww*wwww*w w***ww*******ss*******ww***w www*ww*ww*wwwwwwww*ww*ww*www www*ww*ww*wwwwwwww*ww*ww*www w******ww****ww****ww******w w*wwwwwwwwww*ww*wwwwwwwwww*w w*wwwwwwwwww*ww*wwwwwwwwww*w w**************************w wwwwwwwwwwwwwwwwwwwwwwwwwwwwe";
 /* map looks liek this!
 wwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -97,6 +100,11 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].frighten();
 		}
+		clearTimeout(this.frightenTimer);
+		this.frightenTimer = setTimeout(function(){
+			board.unfrightenGhosts();
+			
+		},6000);
 	}
 	this.unfrightenGhosts = function(){
 		for(var i = 0; i < ghosts.length; i++){
@@ -145,6 +153,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 					context.fillStyle='#FFFF00';
 					context.fillRect(x*(canvas.width/width)+2*((canvas.width/width)/5),y*(canvas.width/width)+2*((canvas.width/width)/5),(canvas.width/width)/5,(canvas.width/width)/5);
 					if((x==1 && y==3) || (x==1 && y==23) || (x==26 && y==3) || (x==26 && y==23)){
+						//if is big nibble
 						context.fillRect(x*(canvas.width/width)+((canvas.width/width)/4),y*(canvas.width/width)+((canvas.width/width)/4),(canvas.width/width)/2,(canvas.width/width)/2);
 					}
 				}
@@ -165,6 +174,14 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 	}
 	this.update=function(){
 		pacMan.update();
+		for(var i = 0; i < ghosts.length; i++){
+			ghosts[i].update();
+		}
+	}
+	this.updatePacMan=function(){
+		pacMan.update();
+	}
+	this.updateGhosts=function(){
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].update();
 		}
@@ -192,11 +209,11 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 	}
 	this.checkCollision = function(x,y){//check to see if pacman and a ghost occupy the same square
 		for(var i = 0; i< ghosts.length; i++){
-			if(pacMan.getX()==ghosts[i].getX() && pacMan.getY()==ghosts[i].getY()) {
+			if(pacMan.getX()==ghosts[i].getX() && pacMan.getY()==ghosts[i].getY() && !ghosts[i].getFrightened()) {
 				this.draw();
 				this.resetBoard();
-
-				alert("You just got omnomed by a ghost. click ok to continue");
+				
+				//alert("You just got omnomed by a ghost. click ok to continue");
 
 				return true;
 			}
@@ -221,7 +238,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 		if(cells[y][x].getEdible())
 			if(cells[y][x].eat()) {
 				nibblesEaten++;
-				$('#log').text(nibblesEaten);
+				$('#nibbles').text(nibblesEaten);
 			}
 	}
 	this.addGhost=function(x,y){
@@ -251,5 +268,22 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 		pacMan.setPos(14,23);
 		pacMan.resetV();
+	}
+	this.start = function(){
+		ghostTimer = setInterval(function() {
+				board.updateGhosts();
+				board.draw();
+			}, 240);
+		pacTimer = setInterval(function() {
+				board.updatePacMan();
+				board.draw();
+			}, 150);
+	}
+	this.pause = function(){
+		clearInterval(pacTimer);
+		clearInterval(ghostTimer);
+	}
+	this.energize = function(){
+		this.frightenGhosts();
 	}
 }
