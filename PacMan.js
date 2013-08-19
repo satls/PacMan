@@ -76,10 +76,6 @@ function PacMan(startX, startY, b){
 			posX+=vX;
 			posY+=vY;
 			board.eatCell(posX, posY);
-			if((posX==1 && posY==3) || (posX==1 && posY==23) || (posX==26 && posY==3) || (posX==26 && posY==23)){
-				//energize
-				board.energize();
-			}
 		}
 		//teleport
 		switch(posX){

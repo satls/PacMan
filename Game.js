@@ -239,6 +239,12 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 			if(cells[y][x].eat()) {
 				nibblesEaten++;
 				$('#nibbles').text(nibblesEaten);
+
+				//energizers
+				if((x==1 && y==3) || (x==1 && y==23) || (x==26 && y==3) || (x==26 && y==23)){
+					//energize
+					this.energize();
+				}
 			}
 	}
 	this.addGhost=function(x,y){

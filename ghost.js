@@ -194,6 +194,8 @@ function Ghost(startX, startY, col, b){
 	//ghosts can turn left or right but not reverse without a special call.
 }
 
+//ghost factories
+
 function Blinky(startX, startY, b){
 	var ghosty = new Ghost(startX, startY, '#FF0000', b);
 	ghosty.getTargets=function(board){
