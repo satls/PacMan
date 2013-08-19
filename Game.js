@@ -12,7 +12,12 @@ function Game(w,h,drawPane){
 	var clyde;
 	var pacTimer;
 	var ghostTimer;
+	var ghostTimer1;
+	var ghostTimer2;
+	var ghostTimer3;
 	this.frightenTimer;
+	var phaseTimer1;
+	var phaseTimer2;
 	var map = "wwwwwwwwwwwwwwwwwwwwwwwwwwww w************ww************w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w*wwww*wwwww*ww*wwww*wwwww*w w**************************w w*wwww*ww*wwwwwwww*ww*wwww*w w*wwww*ww*wwwwwwww*ww*wwww*w w******ww****ww****ww******w wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwwwwswwswwwww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww ssssss*ssswwwwwwwwsss*ssssss wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwssssssssssww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww wwwwww*wwswwwwwwwwsww*wwwwww w************ww************w w*wwwww*wwww*ww*wwwww*wwww*w w*wwwww*wwww*ww*wwwww*wwww*w w***ww*******ss*******ww***w www*ww*ww*wwwwwwww*ww*ww*www www*ww*ww*wwwwwwww*ww*ww*www w******ww****ww****ww******w w*wwwwwwwwww*ww*wwwwwwwwww*w w*wwwwwwwwww*ww*wwwwwwwwww*w w**************************w wwwwwwwwwwwwwwwwwwwwwwwwwwwwe";
 /* map looks liek this!
 wwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -87,16 +92,21 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 	}
 
 	this.scatterGhosts = function(){
+		alert('scatter');
+
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].scatter();
 		}
 	}
 	this.chaseGhosts = function(){
+		alert('chase');
+
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].chase();
 		}
 	}
 	this.frightenGhosts = function(){
+		this.pauseLevelTimeres();
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].frighten();
 		}
@@ -107,6 +117,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 		},6000);
 	}
 	this.unfrightenGhosts = function(){
+		this.resumeLevelTimeres();
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].unfrighten();
 		}
@@ -274,6 +285,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 		pacMan.setPos(14,23);
 		pacMan.resetV();
+		this.startLevelTimers();
 	}
 	this.start = function(){
 		ghostTimer = setInterval(function() {
@@ -284,6 +296,9 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 				board.updatePacMan();
 				board.draw();
 			}, 150);
+		this.startLevelTimers();
+
+		
 	}
 	this.pause = function(){
 		clearInterval(pacTimer);
@@ -291,5 +306,80 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 	}
 	this.energize = function(){
 		this.frightenGhosts();
+
+	}
+	this.startLevelTimers = function(){
+		//level timers:
+		/*
+		in level 1, we:
+		scatter for 7 seconds, then chase for 20
+		scatter for 7 seconds, then chase for 20
+		scatter for 5 seconds, then chase for 20
+		scatter for 5 seconds, then chase forever.
+
+		*/
+		clearTimeout(phaseTimer1);
+		clearTimeout(phaseTimer2);
+
+		//irl ghosts should be on nibble counters not timers just for testing.
+		clearTimeout(ghostTimer1);
+		clearTimeout(ghostTimer2);
+		clearTimeout(ghostTimer3);
+
+		this.startPhase1();
+		this.getBlinky().setPos(14,11);
+
+		//ghost release timers
+
+		//board is a window visible variable so is running in window's context hence why it looks hacky :P
+		ghostTimer1 = setTimeout(function(){
+			board.getPinky().setPos(14,11);
+		},7000);
+
+		ghostTimer2 = setTimeout(function(){
+			board.getInky().setPos(14,11);
+		},10000);
+
+		ghostTimer3 = setTimeout(function(){
+			board.getClyde().setPos(14,11);
+		},13000);
+
+
+		
+	}
+	this.pauseLevelTimeres = function(){
+		//pause level timers when ghosts are frightented 
+	}
+	this.resumeLevelTimeres = function(){
+		//pause level timers when ghosts are frightented 
+	}
+	this.startPhase1=function(){
+		//this.scatterGhosts();
+		alert('phase 1');
+		phaseTimer1 = setTimeout(function(){
+			board.chaseGhosts();
+		},7000);
+		var phaseTimer2 = setTimeout(function(){
+			board.startPhase2();
+		},27000);
+	}
+	this.startPhase2=function(){
+		alert('phase 2');
+
+		board.scatterGhosts();
+		var phaseTimer1 = setTimeout(function(){
+			board.chaseGhosts();
+		},7000);
+		var phaseTimer2 = setTimeout(function(){
+			board.startPhase3();
+		},27000);
+	}
+	this.startPhase3=function(){
+		alert('phase 3');
+
+		board.scatterGhosts();
+		var phaseTimer1 = setTimeout(function(){
+			board.chaseGhosts();
+		},5000);
 	}
 }
