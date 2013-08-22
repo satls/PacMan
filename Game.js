@@ -92,14 +92,14 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 	}
 
 	this.scatterGhosts = function(){
-		alert('scatter');
+		//alert('scatter');
 
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].scatter();
 		}
 	}
 	this.chaseGhosts = function(){
-		alert('chase');
+		//alert('chase');
 
 		for(var i = 0; i < ghosts.length; i++){
 			ghosts[i].chase();
@@ -250,6 +250,9 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 			if(cells[y][x].eat()) {
 				nibblesEaten++;
 				$('#nibbles').text(nibblesEaten);
+				if(nibblesEaten==244){
+					this.resetBoard();
+				}
 
 				//energizers
 				if((x==1 && y==3) || (x==1 && y==23) || (x==26 && y==3) || (x==26 && y==23)){
@@ -318,13 +321,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 		scatter for 5 seconds, then chase forever.
 
 		*/
-		clearTimeout(phaseTimer1);
-		clearTimeout(phaseTimer2);
-
-		//irl ghosts should be on nibble counters not timers just for testing.
-		clearTimeout(ghostTimer1);
-		clearTimeout(ghostTimer2);
-		clearTimeout(ghostTimer3);
+		
 
 		this.startPhase1();
 		this.getBlinky().setPos(14,11);
@@ -355,7 +352,15 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 	}
 	this.startPhase1=function(){
 		//this.scatterGhosts();
-		alert('phase 1');
+		clearTimeout(phaseTimer1);
+		clearTimeout(phaseTimer2);
+
+		//irl ghosts should be on nibble counters not timers just for testing.
+		clearTimeout(ghostTimer1);
+		clearTimeout(ghostTimer2);
+		clearTimeout(ghostTimer3);
+
+		//alert('phase 1');
 		phaseTimer1 = setTimeout(function(){
 			board.chaseGhosts();
 		},7000);
@@ -364,7 +369,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 		},27000);
 	}
 	this.startPhase2=function(){
-		alert('phase 2');
+		//alert('phase 2');
 
 		board.scatterGhosts();
 		var phaseTimer1 = setTimeout(function(){
@@ -375,7 +380,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwww
 		},27000);
 	}
 	this.startPhase3=function(){
-		alert('phase 3');
+		//alert('phase 3');
 
 		board.scatterGhosts();
 		var phaseTimer1 = setTimeout(function(){
